@@ -8,6 +8,7 @@ public class Node {
 	// npc's to the player to weapons
 	private NodeType nodeType;
 	private int row, col;
+	private Enemy e;
 	private boolean visited = false;
 	private boolean isGoalNode = false;
 	private Set<Node> nodeSet;
@@ -39,20 +40,24 @@ public class Node {
 		this.isGoalNode = isGoalNode;
 	}
 	
-	
+	public void initializeEnemy(Node[][] maze) {
+		// If NodeType == Enemy, 
+		// The node will have an Enemy object attached
+		e = new EnemyImpl(maze, row, col);
+	}
 	// Returns true if the Node isn't a border Node
 	public boolean isInBoundaries(Node[][] maze) {
 		return row > 0 && col > 0 
 				&& row < maze.length-1 && col < maze[0].length-1;
 	}
 	
-	public Map<Character,Node> getAdjacentNodes(Node[][] maze) {
-		Map<Character, Node> adjacentNodes = new HashMap<Character, Node>();
+	public List<Node> getAdjacentNodes(Node[][] maze) {
+		List<Node> adjacentNodes = new ArrayList<Node>();
 		
-		if(row-1 > 0) adjacentNodes.put('T', maze[row-1][col]); // Node Above
-		if(row+1 < maze.length-1) adjacentNodes.put('B', maze[row+1][col]); // Node Below
-		if(col-1 > 0) adjacentNodes.put('L', maze[row][col-1]); // Node to left
-		if(col+1 < maze[0].length-1) adjacentNodes.put('R', maze[row+1][col]); // Node to right
+		if(row-1 > 0) adjacentNodes.add(maze[row-1][col]); // Node Above
+		if(row+1 < maze.length-1) adjacentNodes.add(maze[row+1][col]); // Node Below
+		if(col-1 > 0) adjacentNodes.add(maze[row][col-1]); // Node to left
+		if(col+1 < maze[0].length-1) adjacentNodes.add(maze[row+1][col]); // Node to right
 		return adjacentNodes; 
 	}
 	

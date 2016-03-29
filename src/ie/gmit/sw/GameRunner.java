@@ -54,6 +54,16 @@ public class GameRunner implements KeyListener{
     	updateView(); 		
 	}
 	
+	private void initializeEnemies() {
+		for(int row=0; row<model.length; row++) {
+			for(int col=0; col<model[0].length; col++) {
+				if (model[row][col].getNodeType() == NodeType.enemy) {
+					Enemy e = new EnemyImpl(model, row, col);
+				}
+			}
+		}
+	}
+	
 	
 	private void updateView(){
 		view.setCurrentRow(currentRow);
