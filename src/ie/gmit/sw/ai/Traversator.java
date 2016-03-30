@@ -1,14 +1,15 @@
 package ie.gmit.sw.ai;
 
-import ie.gmit.sw.*;
+import ie.gmit.sw.Node;
+
 public interface Traversator {
+	
 	// All searching algorithms will implement this interface
-	public void search(Node[][] maze, int startRow, int startCol);
+	public void search(Node startNode);
 	
-	public void setNewRow(int r); public int getNewRow();
-	public void setNewCol(int c); public int getNewCol();
+	public void setMaze(Node[][] maze); 
 	
-	public void setRow(int r); public int getRow();
-	public void setCol(int c); public int getCol();
+	public void setCurrentNode(Node currentNode); public Node getCurrentNode();
+	public void setNextNode(Node nextNode); public Node getNextNode();
 
 }

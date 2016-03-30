@@ -1,84 +1,84 @@
 package ie.gmit.sw.ai;
 
 import java.util.*;
-
 import ie.gmit.sw.*;
 
-public class RandomWalk implements Traversator{
-	private int newRow, newCol;
-	private int row, col;
+public class RandomWalk implements Traversator {
+	private Node[][] maze;
+	private GameView g;
+	private volatile Node currentNode, nextNode;
+	private boolean complete = false;
 	
-	public RandomWalk(Node[][] maze, int row, int col) {
-		search(maze, row, col);
+	public RandomWalk(Node[][] maze, Node currentNode, GameView g){
+		this.maze = maze;
+		this.currentNode = currentNode;
+		this.g = g;
+		
+		nextNode = currentNode;
+
+		new Thread(new Runnable() {
+			public void run() {
+				search(currentNode);
+			}
+		}).start();
 	}
 	
-	public void search(Node[][] maze, int startRow, int startCol) {
-		long time = System.currentTimeMillis();
-    	int visitCount = 0;
-    	Node node = maze[startRow][startCol];
-		boolean complete = false;
-		while(!complete){		
-			node.setVisited(true);	
-			visitCount++;
-			
-			if (node.isGoalNode()){
-				// Fight
-		        time = System.currentTimeMillis() - time; //Stop the clock
-		        complete = true;
-				break;
-			}
-			
+	public void search(Node currentNode) {
+		
+		while(!complete){			
 			try { // Move once per second
-				Thread.sleep(1000);
+				Thread.sleep(1250);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
-			
+			}		
 			//Pick a random adjacent node
-        	List<Node> children = node.getAdjacentNodes(maze);
-        	int nextNode = 0;
+        	List<Node> children = currentNode.getAdjacentNodes(maze);
+        	int nextNodeIndex = (int)(children.size() * Math.random());
+        	boolean playerFound = false;
+        	
+        	for(Node neighbour : children) { 
+        		if (neighbour.getNodeType() == NodeType.player) {
+        			nextNode = neighbour;
+        			complete = true;
+        			break;
+        		}
+        	}
+        	
         	// Pick random nearby Node until an available position is found
-        	while (children.get(nextNode).getNodeType() != NodeType.floor
-        			|| children.get(nextNode).getNodeType() != NodeType.player) {
-        		nextNode = (int)(children.size() * Math.random());
+        	while (!playerFound && (children.get(nextNodeIndex).getNodeType() != NodeType.floor
+        			&& children.get(nextNodeIndex).getNodeType() != NodeType.player)) {
+           		nextNodeIndex = (int)(children.size() * Math.random());
+        		
         	}
         	// Move enemy in new direction
-        	node = children.get((int)(children.size() * Math.random()));
-        	
+        	nextNode = children.get(nextNodeIndex);
+
+        	g.updateEnemyPositions(currentNode, nextNode);
+        	currentNode = nextNode;
 		}
 	}
 	
-	
-	public void setNewRow(int r) {
-		newRow = r;		
-	}
-
-	public int getNewRow() {
-		return newRow;
-	}
-
-	public void setNewCol(int c) {
-		newCol = c;
-	}
-
-	public int getNewCol() {
-		return newCol;
-	}
-
-	public void setRow(int r) {
-		row = r;
-	}
-
-	public int getRow() {
-		return row;
-	}
-
-	public void setCol(int c) {
-		col = c;		
-	}
-
-	public int getCol() {
-		return col;
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
 	
+	public Node getCurrentNode() {
+		return currentNode;
+	}
+	
+	public void setCurrentNode(Node currentNode) {
+		this.currentNode = currentNode;
+	}
+	
+	public void setNextNode(Node nextNode) {
+		this.nextNode = nextNode;
+	}
+	
+	public Node getNextNode() {
+		return nextNode;
+	}
+
+	public void setMaze(Node[][] maze) {
+		this.maze = maze;
+	}	
 }

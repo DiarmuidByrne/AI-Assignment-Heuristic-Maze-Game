@@ -15,7 +15,6 @@ public class GameRunner implements KeyListener{
 	private int currentRow;
 	private int currentCol;
 	private int mazeDimension;
-	private List<Enemy> enemies = new ArrayList<Enemy>();
 	
 	public GameRunner () throws Exception {
 		view = new GameView();
@@ -24,7 +23,6 @@ public class GameRunner implements KeyListener{
     	
     	// Generate a place for the player to spawn
     	placePlayer();
-    	//placeEnemies();
     	Dimension d = new Dimension(GameView.DEFAULT_VIEW_SIZE+20, GameView.DEFAULT_VIEW_SIZE+20);
     	view.setPreferredSize(d);
     	view.setMinimumSize(d);
@@ -53,21 +51,11 @@ public class GameRunner implements KeyListener{
     	model[currentRow][currentCol].setNodeType(NodeType.player);
     	updateView(); 		
 	}
-	
-	private void initializeEnemies() {
-		for(int row=0; row<model.length; row++) {
-			for(int col=0; col<model[0].length; col++) {
-				if (model[row][col].getNodeType() == NodeType.enemy) {
-					Enemy e = new EnemyImpl(model, row, col);
-				}
-			}
-		}
-	}
-	
-	
+		
 	private void updateView(){
 		view.setCurrentRow(currentRow);
 		view.setCurrentCol(currentCol);
+		
 	}
 
     public void keyPressed(KeyEvent e) {
@@ -88,8 +76,7 @@ public class GameRunner implements KeyListener{
         	return;
         }
         
-        updateView();  
-        //updateEnemyPositions();
+        updateView();
     }
     public void keyReleased(KeyEvent e) {} //Ignore
 	public void keyTyped(KeyEvent e) {} //Ignore
@@ -107,6 +94,10 @@ public class GameRunner implements KeyListener{
 			checkForItems(r, c);
 			return false; //Can't move
 		}
+	}
+	
+	public GameView getView() {
+		return view;
 	}
 	
 	private void checkForItems(int r, int c) {

@@ -13,50 +13,33 @@ public class EnemyImpl implements Enemy {
 	private Traversator t;
 	private Random r = new Random(); 
 	
-	public EnemyImpl(Node[][] maze, int row, int col) {
-		super();
-		new Thread(new Runnable() {
-			public void run() {
-				search(maze, row, col);
-			}
-		}).start();
+	public EnemyImpl(Node[][] maze, Node startNode, GameView g) throws Exception  {
+		search(maze, startNode, g);
 	}
 	
-	public void search(Node[][] maze, int row, int col) {
+	public void search(Node[][] maze, Node startNode, GameView g) {
 		int i = r.nextInt(1);
 		
-		if(i == 0) t = new RandomWalk(maze, row, col); 
+		if(i == 0) t = new RandomWalk(maze, startNode, g); 
 	}
 	
-	public int getRow() {
-		return t.getRow();
+	public void setMaze(Node[][] maze) {
+		t.setMaze(maze);
+	}
+	
+	public Node getCurrentNode() {
+		return t.getCurrentNode();
+	}
+	
+	public void setCurrentNode(Node currentNode) {
+		t.setCurrentNode(currentNode);
+	}
+	
+	public void setNextNode(Node nextNode) {
+		t.setNextNode(nextNode);
 	}
 
-	public void setRow(int row) {
-		t.setRow(row);
-	}
-
-	public int getCol() {
-		return t.getRow();
-	}
-
-	public void setCol(int col) {
-		t.setCol(col);
-	}
-
-	public void setNewRow(int r) {
-		t.setNewRow(r);
-	}
-
-	public int getNewRow() {
-		return t.getNewRow();
-	}
-
-	public void setNewCol(int c) {
-		t.setNewCol(c);
-	}
-
-	public int getNewCol() {
-		return t.getNewCol();
+	public Node getNextNode() {
+		return t.getNextNode();
 	}
 }

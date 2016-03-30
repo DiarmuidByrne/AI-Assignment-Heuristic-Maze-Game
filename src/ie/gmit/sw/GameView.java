@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -27,6 +29,8 @@ public class GameView extends JPanel implements ActionListener{
 	private Timer timer;
 	private boolean zoomOut = false;
 	private int imageIndex = -1;
+	private List<Enemy> enemies = new ArrayList<Enemy>();
+
 	
 	public GameView () throws Exception {
 		maze = m.getMaze();
@@ -35,6 +39,7 @@ public class GameView extends JPanel implements ActionListener{
 		setBackground(Color.LIGHT_GRAY);
 		setDoubleBuffered(true);
 		timer = new Timer(300, this);
+    	initializeEnemies();
 		timer.start();
 	}
 	
@@ -102,7 +107,6 @@ public class GameView extends JPanel implements ActionListener{
         			imageIndex = 3;;
         		}else if (ch == NodeType.hBomb){
         			imageIndex = 4;;
-        		// Change enemy sprites to allow animation
         		}else if (ch == NodeType.enemy){
         			imageIndex = enemy_state;;       			
         		}else if (ch == NodeType.player) {
@@ -128,19 +132,44 @@ public class GameView extends JPanel implements ActionListener{
 	public void toggleZoom(){
 		zoomOut = !zoomOut;	
 	}
+	
+	private void initializeEnemies() throws Exception {
+		for(int row=0; row<maze.length; row++) {
+			for(int col=0; col<maze[0].length; col++) {
+				if (maze[row][col].getNodeType() == NodeType.enemy) {
+					Enemy e = new EnemyImpl(maze, maze[row][col], this);
+					e.setCurrentNode(maze[row][col]);
+					enemies.add(e);
+				}
+			}
+		}
+	}
+	
+	public void updateEnemyPositions(Node current, Node next) {
+		current.setNodeType(NodeType.floor);
+		next.setNodeType(NodeType.enemy);
+		
+	}
 
-	public void actionPerformed(ActionEvent e) {	
+	public void actionPerformed(ActionEvent e) {
+		
 		if (enemy_state < 0 || enemy_state == 5){
 			enemy_state = 6;
 		}else{
 			enemy_state = 5;
 		}
+		
+		for (Enemy enemy : enemies) {
+			enemy.setMaze(maze);
+		}
+
 		this.repaint();
 	}
 	
 	private void init() throws Exception{
 		images = new BufferedImage[IMAGE_COUNT];
-		images[0] = ImageIO.read(new java.io.File("src/Resources/hedge.png"));
+		//images[0] = ImageIO.read(new java.io.File("src/Resources/hedge.png"));
+		images[0] = ImageIO.read(new java.io.File("src/Resources/Eoghan.png"));
 		images[1] = ImageIO.read(new java.io.File("src/Resources/sword.png"));		
 		images[2] = ImageIO.read(new java.io.File("src/Resources/help.png"));
 		images[3] = ImageIO.read(new java.io.File("src/Resources/bomb.png"));

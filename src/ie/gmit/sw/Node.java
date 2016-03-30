@@ -40,11 +40,7 @@ public class Node {
 		this.isGoalNode = isGoalNode;
 	}
 	
-	public void initializeEnemy(Node[][] maze) {
-		// If NodeType == Enemy, 
-		// The node will have an Enemy object attached
-		e = new EnemyImpl(maze, row, col);
-	}
+	
 	// Returns true if the Node isn't a border Node
 	public boolean isInBoundaries(Node[][] maze) {
 		return row > 0 && col > 0 
@@ -57,7 +53,7 @@ public class Node {
 		if(row-1 > 0) adjacentNodes.add(maze[row-1][col]); // Node Above
 		if(row+1 < maze.length-1) adjacentNodes.add(maze[row+1][col]); // Node Below
 		if(col-1 > 0) adjacentNodes.add(maze[row][col-1]); // Node to left
-		if(col+1 < maze[0].length-1) adjacentNodes.add(maze[row+1][col]); // Node to right
+		if(col+1 < maze[0].length-1) adjacentNodes.add(maze[row][col+1]); // Node to right
 		return adjacentNodes; 
 	}
 	
