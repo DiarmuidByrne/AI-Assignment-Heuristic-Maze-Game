@@ -1,6 +1,6 @@
 package ie.gmit.sw.ai;
 
-import ie.gmit.sw.Node;
+import ie.gmit.sw.maze.Node;
 
 public interface Traversator {
 	
@@ -10,6 +10,6 @@ public interface Traversator {
 	public void setMaze(Node[][] maze); 
 	
 	public void setCurrentNode(Node currentNode); public Node getCurrentNode();
-	public void setNextNode(Node nextNode); public Node getNextNode();
-
+	
+	public void kill(boolean kill);
 }

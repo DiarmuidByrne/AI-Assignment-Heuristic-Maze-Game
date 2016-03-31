@@ -2,7 +2,9 @@ package ie.gmit.sw.ai;
 
 import java.util.*;
 
-import ie.gmit.sw.*;
+import ie.gmit.sw.game.*;
+import ie.gmit.sw.maze.Node;
+import ie.gmit.sw.maze.NodeType;
 
 public class EllersMaze  implements Generator{
 	private Random r = new Random();
