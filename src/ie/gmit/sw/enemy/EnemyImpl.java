@@ -1,6 +1,7 @@
 package ie.gmit.sw.enemy;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import ie.gmit.sw.ai.*;
 import ie.gmit.sw.game.GameView;
@@ -15,12 +16,13 @@ public class EnemyImpl implements Enemy {
 	 * All encapsulated methods here delegate 
 	 * to the appropriate Traversator implementation
 	 */
-	
+	private int strength;
 	private Traversator t;
 	private Random r = new Random(); 
 	
 	public EnemyImpl(Node[][] maze, Node startNode, GameView g) throws Exception  {
 		search(maze, startNode, g);
+		strength = ThreadLocalRandom.current().nextInt(3, 8 + 1);
 	}
 	
 	public void search(Node[][] maze, Node startNode, GameView g) {
@@ -43,5 +45,10 @@ public class EnemyImpl implements Enemy {
 
 	public void kill(boolean kill) {
 		t.kill(kill);
+	}
+	
+	public int getStrength() {
+		System.out.println("Strength : " + strength);
+		return strength;
 	}
 }

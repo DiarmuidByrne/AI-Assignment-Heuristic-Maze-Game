@@ -1,7 +1,7 @@
 package ie.gmit.sw.maze;
 
-import ie.gmit.sw.ai.AStarSearch;
-import ie.gmit.sw.game.GameView;
+import ie.gmit.sw.ai.*;
+import ie.gmit.sw.game.*;
 
 public class Item {
 	private Node node;
@@ -12,7 +12,7 @@ public class Item {
 	
 	public void activateItem(Node[][] maze, Node startNode, Node goal, GameView g) {
 		if (node.getNodeType() == NodeType.hint) {
-			new AStarSearch(maze, startNode, goal, g);
+			new GreedyBestFirstSearch(maze, startNode, goal, g);
 		}
 	}
 }

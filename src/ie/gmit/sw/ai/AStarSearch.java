@@ -6,6 +6,7 @@ import ie.gmit.sw.game.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 
+
 public class AStarSearch {
 	private GameView g;
 	private Node[][] maze;
@@ -63,19 +64,18 @@ public class AStarSearch {
 	
 	public void pushSuccessors(Node next) {
 		List<Node> children = next.getAdjacentNodes(maze);
-		
-		for (int i=0; i<children.size(); i++) {
-			Node child = children.get(i);
-			int score = child.getHeuristic(goal)+1;
-			
-			if(child.getNodeType() != NodeType.floor || child.getNodeType() != NodeType.enemy
-					|| child.getNodeType() != NodeType.player) continue;
-			
-			if (open.contains(child) || closed.contains(child) && child.getHeuristic(goal) < score) continue;
+		int score = 0;
+		for (Node child : children) {
+			score = child.getHeuristic(goal)+1;
+
+			if(child.getNodeType() != NodeType.floor && child.getNodeType() != NodeType.enemy
+					&& child.getNodeType() != NodeType.player && child.getNodeType()!= NodeType.goal) continue;
+
+			if ((open.contains(child) || closed.contains(child)) && child.getHeuristic(goal) < score) continue;
 			
 			else {
-				open.remove(child);
-				closed.remove(child);
+				open.remove(next);
+				closed.add(next);
 				child.setParent(next);
 				open.add(child);
 			}

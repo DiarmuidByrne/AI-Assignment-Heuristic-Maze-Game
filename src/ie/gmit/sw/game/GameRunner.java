@@ -8,9 +8,10 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
 import ie.gmit.sw.maze.*;
-import ie.gmit.sw.player.*;
 
 public class GameRunner implements KeyListener{
+    // Load from 'FCL' file
+
 	private Node[][] model;
 	private GameView view;
 	private int currentRow;
@@ -74,6 +75,8 @@ public class GameRunner implements KeyListener{
 				|| model[r][c].getNodeType() == NodeType.path
 				|| model[r][c].getNodeType() == NodeType.enemy)){
 			
+			// If enemy and player meet, initialize a fight
+			if (model[r][c].getNodeType() == NodeType.enemy) view.initializeFight(model[r][c]);			
 			model[currentRow][currentCol].setNodeType(NodeType.floor);
 			model[r][c].setNodeType(NodeType.player);
 			view.repaint();

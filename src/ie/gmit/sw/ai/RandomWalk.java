@@ -53,6 +53,7 @@ public class RandomWalk implements Traversator {
         		if (neighbour.getNodeType() == NodeType.player) {
         			nextNode = neighbour;
         			playerFound = true;
+        			g.initializeFight(currentNode);
         			complete = true;
         		}
         	}
@@ -67,6 +68,7 @@ public class RandomWalk implements Traversator {
         	}
         	g.updateEnemyPositions(currentNode, nextNode);
         	currentNode = nextNode;
+        	this.currentNode = currentNode;
 		}
 	}
 	

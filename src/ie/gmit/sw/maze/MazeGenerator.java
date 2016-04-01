@@ -19,16 +19,16 @@ public class MazeGenerator {
 	
 	
 	private void initializeFeatures() {
-		/**
+		/*
 		 * Initialize Game Features
 		 * - 1 Enemies
 		 * - 2 Weapons and Bombs 
 		 * - 3 Hints
 		 */
 		
-		addFeature(NodeType.enemy, NodeType.floor, 50);
-		addFeature(NodeType.weapon, NodeType.wall, 20);
-		addFeature(NodeType.hint, NodeType.wall, 40);
+		addFeature(NodeType.enemy, NodeType.floor, 30);
+		addFeature(NodeType.weapon, NodeType.wall, 40);
+		addFeature(NodeType.hint, NodeType.wall, 20);
 		addFeature(NodeType.bomb, NodeType.wall, 5);
 		addFeature(NodeType.hBomb, NodeType.wall, 3);
 		addFeature(NodeType.goal, NodeType.wall, 1);

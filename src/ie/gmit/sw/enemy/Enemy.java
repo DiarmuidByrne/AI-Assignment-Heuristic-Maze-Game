@@ -12,4 +12,6 @@ public interface Enemy {
 	public void setCurrentNode(Node currentNode);	public Node getCurrentNode();
 	
 	public void kill(boolean dead);
+	
+	public int getStrength();
 }

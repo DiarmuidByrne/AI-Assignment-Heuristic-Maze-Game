@@ -40,12 +40,11 @@ public class EllersMaze  implements Generator{
 			}
 		}
 	}
-	
+
 	public void buildMaze() {
 		init();
 		// Implementation of Eller's Algorithm
-		// 1. Initialize first row
-		// Foreach col node in first row below border
+		// Initialize first row
 		for(int i=1; i<maze.length;i+=2) {
 			for(Node node : maze[i]) {
 				if (node.getNodeType() == NodeType.floor && node.isStartingCell()) {
@@ -67,8 +66,8 @@ public class EllersMaze  implements Generator{
 			}
 		}
 	}
-		
-	// Randomize whether or not to break a wall
+	
+	// Randomize whether or not to break a wall to the right
 	private void breakRightWall(Node node, int row, int col) {
 		int toBreak = r.nextInt(6);
 		Node adjacentNode = maze[row][col+2];
@@ -86,7 +85,7 @@ public class EllersMaze  implements Generator{
 			adjacentNode.setNodeSet(node.getNodeSet());
 		}
 	}
-	
+	// Break at least one bottom wall every row for each set
 	private void breakBottomWall(Set<Node> set, int level) {
 		List<Node> bottomNodes = new ArrayList<Node>();
 		
@@ -94,7 +93,7 @@ public class EllersMaze  implements Generator{
 
 		
 		// Decide on how many times the set should break a wall
-		// Must be at least one break for each set
+		// (Must be at least one)
 		int numberOfBreaks = r.nextInt(bottomNodes.size())+1;
 		int broken = 0;
 		
@@ -110,7 +109,9 @@ public class EllersMaze  implements Generator{
 			nextCell.setNodeSet(nodeToBreak.getNodeSet());
 		}
 	}
-	
+	// Finalize maze when the last row is reached
+	// 1. All cells must belong to the same set
+//	 2. No bottom walls can be broken for the lowest row
 	private void finishMaze(Set<Node> set) {
 		List<Node> bottomNodes = getBottomNodes(set, maze.length-1);
 		

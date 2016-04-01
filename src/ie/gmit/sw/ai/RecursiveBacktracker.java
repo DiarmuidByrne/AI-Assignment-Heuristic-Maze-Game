@@ -10,8 +10,6 @@ public class RecursiveBacktracker  implements Generator{
 	private Random r = new Random();
 	private Node[][] maze;
 	private Set<Node> startingCells = new HashSet<Node>();
-	private Set<Node> unvisitedNodes = new HashSet<Node>();
-	
 	/*
 	 * Implementation of a recursive backtracker algorithm
 	 * Unlike Eller's algorithm, this produces a much windier solution,
@@ -51,20 +49,20 @@ public class RecursiveBacktracker  implements Generator{
 	
 	public void buildMaze() {
 		init();
-		unvisitedNodes = startingCells;
+		
 		Stack<Node> nodeStack = new Stack<Node>();
 		List<Node> unvisitedNeighbours = new ArrayList<Node>();
 		int randIndex = r.nextInt(startingCells.size());
 		int i = 0;
 		// Initial Node
-		Node currentNode;
 		Node startingNode = new Node();
 		
 		for(Node cell : startingCells) {
 			if (i == randIndex) startingNode = cell;
 			else i++;
 		}
-		currentNode = startingNode;
+		
+		Node currentNode = startingNode;
 		do {
 			currentNode.setVisited(true);
 			
@@ -82,7 +80,6 @@ public class RecursiveBacktracker  implements Generator{
 				
 				Node wallNode = getWall(currentNode, nextNode);
 				wallNode.setNodeType(NodeType.floor);
-				unvisitedNodes.remove(currentNode);
 				currentNode = nextNode;
 				unvisitedNeighbours.clear();
 			} else if (!nodeStack.isEmpty()) {

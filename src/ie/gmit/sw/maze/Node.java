@@ -38,7 +38,8 @@ public class Node {
 	public boolean containsItem() {
 		return nodeType == nodeType.bomb 
 				|| nodeType == nodeType.hBomb
-				|| nodeType == nodeType.hint;
+				|| nodeType == nodeType.hint
+				|| nodeType == nodeType.weapon;
 	}
 	
 	public boolean isStartingCell() {

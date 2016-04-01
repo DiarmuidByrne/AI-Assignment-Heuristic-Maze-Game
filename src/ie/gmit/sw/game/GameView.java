@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.sql.Time;
 import java.util.*;
 
 import javax.imageio.ImageIO;
@@ -16,10 +17,11 @@ import ie.gmit.sw.maze.*;
 import ie.gmit.sw.player.*;
 
 public class GameView extends JPanel implements ActionListener{
+
 	private static final long serialVersionUID = 1L;
 	public static final int DEFAULT_VIEW_SIZE = 800;	
 	private static final int IMAGE_COUNT = 10;
-	private static final int MAZE_DIMENSION = 50;
+	private static final int MAZE_DIMENSION = 60;
 	private MazeGenerator m = new MazeGenerator(MAZE_DIMENSION, MAZE_DIMENSION);
 	private int cellspan = 5;	
 	private int cellpadding = 2;
@@ -36,6 +38,8 @@ public class GameView extends JPanel implements ActionListener{
 	private Player p;
 	private Node goalNode;
 	private boolean hintActive = false;
+	private Timer hintTimer;
+
 
 	
 	public GameView () throws Exception {
@@ -204,25 +208,39 @@ public class GameView extends JPanel implements ActionListener{
 	
 	// Retrieves a list of Nodes from the Hints traverser class and displays a path to the goal
 	public void showPath(List<Node> path) {
-		for(Node node : path) {
-			if (node.getNodeType() != NodeType.player &&
-					node.getNodeType() != NodeType.enemy && node.getNodeType()!= NodeType.goal) 
-				node.setNodeType(NodeType.path);
-		}
+		
+//		if (!hintTimer.isRunning()) {
+			for(Node node : path) {
+				if (node.getNodeType() != NodeType.player &&
+						node.getNodeType() != NodeType.enemy && node.getNodeType()!= NodeType.goal) 
+					node.setNodeType(NodeType.path);
+			}
+//			new TimerTask() {	
+//				public void run() {
+					hidePath();
+//				}
+//			};
+//		}
 		hintActive = false;
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void hidePath() {
 		
 	}
 	
+	public void initializeFight(Node enemyNode) {
+		Enemy toFight = null;
+		for(Enemy e : enemies) {
+			if (e.getCurrentNode() == enemyNode) toFight = e;
+		}
+		int damage = new Fight().evaluateFight(toFight, p.getWeaponDurability());
+		p.setWeaponDurability(p.getWeaponDurability()-5);
+		p.setHealth(p.getHealth() - damage);
+		System.out.println("Player health: " + p.getHealth());
+	}
+	
 	public void activateItem(Node n) {
+		if (n.getNodeType() == NodeType.weapon) p.addWeapon();
 		Item i = items.get(n);
 	    i.activateItem(maze, p.getCurrentNode(), goalNode, this);
 	}
