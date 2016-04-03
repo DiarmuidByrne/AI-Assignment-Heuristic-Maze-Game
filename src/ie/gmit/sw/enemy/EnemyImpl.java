@@ -19,13 +19,16 @@ public class EnemyImpl implements Enemy {
 	private int strength;
 	private Traversator t;
 	private Random r = new Random(); 
+	private boolean visible = false;
+	private static final int MIN_STRENGTH = 3, MAX_STRENGTH = 8;
 	
 	public EnemyImpl(Node[][] maze, Node startNode, GameView g) throws Exception  {
 		search(maze, startNode, g);
-		strength = ThreadLocalRandom.current().nextInt(3, 8 + 1);
+		strength = ThreadLocalRandom.current().nextInt(MIN_STRENGTH, MAX_STRENGTH + 1);
 	}
 	
 	public void search(Node[][] maze, Node startNode, GameView g) {
+		// Randomize search algorithm
 		int i = r.nextInt(1);
 		
 		if(i == 0) t = new RandomWalk(maze, startNode, g); 
@@ -43,12 +46,20 @@ public class EnemyImpl implements Enemy {
 		t.setCurrentNode(currentNode);
 	}
 
-	public void kill(boolean kill) {
-		t.kill(kill);
+	public void kill() {
+		t.setFinished(true);
 	}
 	
 	public int getStrength() {
-		System.out.println("Strength : " + strength);
 		return strength;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 }

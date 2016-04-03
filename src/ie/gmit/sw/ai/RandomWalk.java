@@ -10,10 +10,10 @@ public class RandomWalk implements Traversator {
 	private final int MAX_DELAY = 1500, MIN_DELAY = 1000;
 	private Node[][] maze;
 	private GameView g;
-	private volatile Node currentNode, nextNode;
+	private Node currentNode, nextNode;
 	private Random r = new Random();
-	private boolean complete = false;
-	private boolean killed = false;
+	private volatile boolean complete = false;
+	private volatile boolean playerFound = false;
 	
 	/*
 	 * This is an implementation of the 'RandomWalk' search algorithm.
@@ -35,7 +35,7 @@ public class RandomWalk implements Traversator {
 	}
 	
 	public void search(Node currentNode) {
-		while(!complete && !killed){			
+		while(!complete){			
 			try { 
 				// Set delay for enemy movement
 				// Delay is randomized so enemy movement patterns aren't synced
@@ -43,18 +43,17 @@ public class RandomWalk implements Traversator {
 				Thread.sleep(ms);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}		
+			}	
 			//Pick a random adjacent node
         	List<Node> children = currentNode.getAdjacentNodes(maze);
         	int nextNodeIndex = (int)(children.size() * Math.random());
-        	boolean playerFound = false;
+        	if(playerFound) return;
         	
         	for(Node neighbour : children) { 
         		if (neighbour.getNodeType() == NodeType.player) {
         			nextNode = neighbour;
         			playerFound = true;
-        			g.initializeFight(currentNode);
-        			complete = true;
+        			break;
         		}
         	}
         	if(!playerFound) {
@@ -65,10 +64,14 @@ public class RandomWalk implements Traversator {
 	        	} 
 	        	// Move enemy in new direction
 	        	nextNode = children.get(nextNodeIndex);
-        	}
+        	} 
+        	if(complete) return;
+        	if(playerFound) g.initializeFight(currentNode);
+        	nextNode.setEnemy(currentNode.getEnemy());
         	g.updateEnemyPositions(currentNode, nextNode);
         	currentNode = nextNode;
         	this.currentNode = currentNode;
+			if (g.getPlayer().getCurrentNode() == currentNode) return; 
 		}
 	}
 	
@@ -97,7 +100,7 @@ public class RandomWalk implements Traversator {
 	}
 
 	@Override
-	public void kill(boolean kill) {
-		killed = kill;
-	}	
+	public void setFinished(boolean finished) {
+		complete = finished;		
+	}
 }

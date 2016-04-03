@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.sql.Time;
 import java.util.*;
 
 import javax.imageio.ImageIO;
@@ -20,25 +19,26 @@ public class GameView extends JPanel implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
 	public static final int DEFAULT_VIEW_SIZE = 800;	
-	private static final int IMAGE_COUNT = 10;
+	private static final int IMAGE_COUNT = 21;
 	private static final int MAZE_DIMENSION = 60;
 	private MazeGenerator m = new MazeGenerator(MAZE_DIMENSION, MAZE_DIMENSION);
 	private int cellspan = 5;	
 	private int cellpadding = 2;
 	private Node[][] maze;
 	private BufferedImage[] images;
-	private int enemy_state = 5;
+	private int enemy_state = 5, playerState = 5;
 	private int currentRow;
 	private int currentCol;
 	private Timer timer;
 	private boolean zoomOut = false;
 	private int imageIndex = -1;
+	private int spriteIndex = 10;
 	private List<Enemy> enemies = new ArrayList<Enemy>();
 	private Map<Node, Item> items = new HashMap<Node, Item>();
 	private Player p;
+	private List<Node> path = new ArrayList<Node>();
 	private Node goalNode;
-	private boolean hintActive = false;
-	private Timer hintTimer;
+	private HeadsUpDisplay hud = new HeadsUpDisplay(DEFAULT_VIEW_SIZE);
 
 
 	
@@ -83,14 +83,13 @@ public class GameView extends JPanel implements ActionListener{
 		p.setCurrentNode(maze[row][col]);
 	}
 
-	public void paintComponent(Graphics g) {
+	public void paint(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
-              
         cellspan = zoomOut ? maze.length : 5;         
         int size = DEFAULT_VIEW_SIZE/cellspan;
-        g2.drawRect(0, 0, GameView.DEFAULT_VIEW_SIZE, GameView.DEFAULT_VIEW_SIZE);
-        
+        g2.drawRect(0, 0, DEFAULT_VIEW_SIZE, DEFAULT_VIEW_SIZE);
+
         for(int row = 0; row < cellspan; row++) {
         	for (int col = 0; col < cellspan; col++){  
         		int x1 = col * size;
@@ -100,59 +99,47 @@ public class GameView extends JPanel implements ActionListener{
        		
         		if (zoomOut){
         			size = DEFAULT_VIEW_SIZE/cellspan;
-        			ch = maze[row][col].getNodeType();
-        			// Display character on map
-        			if (row == currentRow && col == currentCol){
-        				g2.setColor(Color.WHITE);
-        				g2.fillRect(x1, y1, size, size);
-        				continue;
-        			} else if (maze[row][col].getNodeType() == NodeType.enemy) {
-        				g2.setColor(Color.RED);
-        				g2.fillRect(x1, y1, size, size);
-        			} else if (maze[row][col].getNodeType() == NodeType.goal) {
-        				g2.setColor(Color.YELLOW);
-        				g2.fillRect(x1, y1, size, size);
-        			} else if (maze[row][col].getNodeType() == NodeType.hint) {
-        				g2.setColor(Color.BLUE);
-        				g2.fillRect(x1, y1, size, size);
+        			Node n = maze[row][col];
+        			ch = n.getNodeType();
+        			hud.showMap(g2, n, size, x1, y1, p);
 
-        			}
         		}else{
         			ch = maze[currentRow - cellpadding + row][currentCol - cellpadding + col].getNodeType();
+	
+	        		if (ch == NodeType.wall){        			
+	        			imageIndex = 0;;
+	        		}else if (ch == NodeType.weapon){
+	        			imageIndex = 1;;
+	        		}else if (ch == NodeType.hint){
+	        			imageIndex = 2;;
+	        		}else if (ch == NodeType.bomb){
+	        			imageIndex = 3;;
+	        		}else if (ch == NodeType.radar){
+	        			imageIndex = 4;;
+	        		}else if (ch == NodeType.enemy){
+	        			imageIndex = enemy_state;;       			
+	        		}else if (ch == NodeType.player) {
+	        			imageIndex = spriteIndex;
+	        		} else if (ch == NodeType.path) {
+	        			imageIndex = 7;        		
+	        		}else if (ch == NodeType.goal) {
+	        			imageIndex = 8;
+	        		}else if (ch == NodeType.key){
+	        			imageIndex = 19;
+	        		} else if (ch == NodeType.ash) {
+	        			imageIndex = 20;
+	        		} else {
+	        			imageIndex = -1;
+	        		}
+	        		
+	        		if (imageIndex >= 0){
+	        			g2.drawImage(images[imageIndex], x1, y1, null);
+	        		}
         		}
-        		
-        		
-        		if (ch == NodeType.wall){        			
-        			imageIndex = 0;;
-        		}else if (ch == NodeType.weapon){
-        			imageIndex = 1;;
-        		}else if (ch == NodeType.hint){
-        			imageIndex = 2;;
-        		}else if (ch == NodeType.bomb){
-        			imageIndex = 3;;
-        		}else if (ch == NodeType.hBomb){
-        			imageIndex = 4;;
-        		}else if (ch == NodeType.enemy){
-        			imageIndex = enemy_state;;       			
-        		}else if (ch == NodeType.player) {
-        			imageIndex = 7;
-        		} else if (ch == NodeType.path) {
-        			imageIndex = 8;        		
-        		}else if (ch == NodeType.goal) {
-        			imageIndex = 9;
-        		}else{
-        			imageIndex = -1;
-        		}
-        		
-        		if (imageIndex >= 0){
-        			g2.drawImage(images[imageIndex], x1, y1, null);
-        		}
-        		 else{
-        			g2.setColor(Color.LIGHT_GRAY);
-        			g2.fillRect(x1, y1, size, size);
-        		}      		
         	}
         }
+        if (!zoomOut) hud.showHealth(p, g2);
+
 	}
 	
 	public void toggleZoom(){
@@ -168,6 +155,7 @@ public class GameView extends JPanel implements ActionListener{
 					Enemy e = new EnemyImpl(maze, n, this);
 					e.setCurrentNode(n);
 					enemies.add(e);
+					n.setEnemy(e);
 				}
 				// Initialize Player Object
 				else if (n.getNodeType() == NodeType.player) {
@@ -200,32 +188,38 @@ public class GameView extends JPanel implements ActionListener{
 			enemy_state = 5;
 		}
 		
+		if (p.isFacingRight()) {
+			if (playerState == 9) playerState = 10;
+			else if (playerState == 10) playerState = 11;
+			else playerState = 9;
+		} else {
+			if (playerState == 14) playerState = 15;
+			else if (playerState == 15) playerState = 16;
+			else playerState = 14;
+		}
+		spriteIndex = p.getPlayerState(maze, playerState);
+
 		for (Enemy enemy : enemies) {
 			enemy.setMaze(maze);
+		}
+		if (p.getStepCount() > 50) {
+			hidePath();
 		}
 		repaint();
 	}
 	
+	public void setFacingRight(boolean facingRight) {
+		p.setFacingRight(facingRight);
+	}
+	
 	// Retrieves a list of Nodes from the Hints traverser class and displays a path to the goal
 	public void showPath(List<Node> path) {
-		
-//		if (!hintTimer.isRunning()) {
-			for(Node node : path) {
-				if (node.getNodeType() != NodeType.player &&
-						node.getNodeType() != NodeType.enemy && node.getNodeType()!= NodeType.goal) 
-					node.setNodeType(NodeType.path);
-			}
-//			new TimerTask() {	
-//				public void run() {
-					hidePath();
-//				}
-//			};
-//		}
-		hintActive = false;
+		this.path = path;
+		hud.showPath(p, path);
 	}
 	
 	public void hidePath() {
-		
+		hud.hidePath(path);
 	}
 	
 	public void initializeFight(Node enemyNode) {
@@ -236,7 +230,6 @@ public class GameView extends JPanel implements ActionListener{
 		int damage = new Fight().evaluateFight(toFight, p.getWeaponDurability());
 		p.setWeaponDurability(p.getWeaponDurability()-5);
 		p.setHealth(p.getHealth() - damage);
-		System.out.println("Player health: " + p.getHealth());
 	}
 	
 	public void activateItem(Node n) {
@@ -247,18 +240,29 @@ public class GameView extends JPanel implements ActionListener{
 	
 	private void init() throws Exception{
 		images = new BufferedImage[IMAGE_COUNT];
-		images[0] = ImageIO.read(new java.io.File("src/Resources/hedge.png"));
-//		images[0] = ImageIO.read(new java.io.File("src/Resources/Eoghan.png"));
-		images[1] = ImageIO.read(new java.io.File("src/Resources/sword.png"));		
-		images[2] = ImageIO.read(new java.io.File("src/Resources/help.png"));
-		images[3] = ImageIO.read(new java.io.File("src/Resources/bomb.png"));
-		images[4] = ImageIO.read(new java.io.File("src/Resources/h_bomb.png"));
-		images[5] = ImageIO.read(new java.io.File("src/Resources/spider_down.png"));
-		images[6] = ImageIO.read(new java.io.File("src/Resources/spider_up.png"));
-		images[7] = ImageIO.read(new java.io.File("src/Resources/player.png"));
-		images[8] = ImageIO.read(new java.io.File("src/Resources/hint.png"));
-		images[9] = ImageIO.read(new java.io.File("src/Resources/Goal.png"));
+		images[0] = ImageIO.read(new java.io.File("Resources/hedge.png"));
+		images[1] = ImageIO.read(new java.io.File("Resources/sword.png"));		
+		images[2] = ImageIO.read(new java.io.File("Resources/help.png"));
+		images[3] = ImageIO.read(new java.io.File("Resources/bomb.png"));
+		images[4] = ImageIO.read(new java.io.File("Resources/radar.png"));
+		images[5] = ImageIO.read(new java.io.File("Resources/spider_down.png"));
+		images[6] = ImageIO.read(new java.io.File("Resources/spider_up.png"));
+		images[7] = ImageIO.read(new java.io.File("Resources/hint.png"));
+		images[8] = ImageIO.read(new java.io.File("Resources/Goal.png"));
+		images[9] = ImageIO.read(new java.io.File("Resources/Player/Idle_1.png"));
+		images[10] = ImageIO.read(new java.io.File("Resources/Player/Idle_1.png"));
+		images[11] = ImageIO.read(new java.io.File("Resources/Player/Idle_2.png"));
+		images[12] = ImageIO.read(new java.io.File("Resources/Player/Sword_Idle.png"));
+		images[13] = ImageIO.read(new java.io.File("Resources/Player/Scared.png"));
+		images[14] = ImageIO.read(new java.io.File("Resources/Player/L_Idle_1.png"));
+		images[15] = ImageIO.read(new java.io.File("Resources/Player/L_Idle_1.png"));
+		images[16] = ImageIO.read(new java.io.File("Resources/Player/L_Idle_2.png"));
+		images[17] = ImageIO.read(new java.io.File("Resources/Player/L_Sword_Idle.png"));
+		images[18] = ImageIO.read(new java.io.File("Resources/Player/L_Scared.png"));
+		images[19] = ImageIO.read(new java.io.File("Resources/key.png"));
+		images[20] = ImageIO.read(new java.io.File("Resources/ash_pile.png"));
 	}
+
 	
 	public MazeGenerator getMazeGenerator() {
 		return m;
@@ -268,12 +272,12 @@ public class GameView extends JPanel implements ActionListener{
 		return m.getMaze();
 	}
 	
-	public void setMaze(Node[][] maze) {
-		m.setMaze(maze);
+	public Player getPlayer() {
+		return p;
 	}
 	
-	public void setHintActive(boolean active) {
-		hintActive = active;
+	public void setMaze(Node[][] maze) {
+		m.setMaze(maze);
 	}
 	
 	public int getMazeDimension() {

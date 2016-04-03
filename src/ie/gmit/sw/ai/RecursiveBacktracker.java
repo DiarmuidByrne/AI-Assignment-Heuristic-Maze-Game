@@ -1,8 +1,6 @@
 package ie.gmit.sw.ai;
 
 import java.util.*;
-
-import ie.gmit.sw.game.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 
@@ -18,6 +16,7 @@ public class RecursiveBacktracker  implements Generator{
 	public RecursiveBacktracker(Node[][] maze) {
 		super();
 		this.maze = maze;
+		init();
 		buildMaze();
 	}
 	
@@ -47,9 +46,7 @@ public class RecursiveBacktracker  implements Generator{
 		}
 	}
 	
-	public void buildMaze() {
-		init();
-		
+	public void buildMaze() {		
 		Stack<Node> nodeStack = new Stack<Node>();
 		List<Node> unvisitedNeighbours = new ArrayList<Node>();
 		int randIndex = r.nextInt(startingCells.size());

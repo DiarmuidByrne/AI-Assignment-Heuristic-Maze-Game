@@ -28,6 +28,7 @@ public class AStarSearch {
 				search(start);
 			}
 		}).start();
+		setNodesAsUnvisited();
 	}
 	
 	public void search(Node start) {
@@ -79,6 +80,13 @@ public class AStarSearch {
 				child.setParent(next);
 				open.add(child);
 			}
+		}
+	}
+	
+	private void setNodesAsUnvisited() {
+		for(int r=0; r<maze.length;r++) {
+			for(int c=0; c<maze[0].length;c++)
+				maze[r][c].setVisited(false);
 		}
 	}
 }

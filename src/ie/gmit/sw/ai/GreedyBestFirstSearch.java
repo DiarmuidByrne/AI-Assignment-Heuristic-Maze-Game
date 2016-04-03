@@ -12,7 +12,7 @@ public class GreedyBestFirstSearch {
 	private Node goal;
 	
 	private HeuristicComparator heuristicComparer;
-	private List<Node> closed = new ArrayList<Node>();
+	List<Node> closed = new ArrayList<Node>();
 	private PriorityQueue<Node> open;
 	
 	public GreedyBestFirstSearch(Node[][] maze, Node start, Node goal, GameView g) {
@@ -27,6 +27,7 @@ public class GreedyBestFirstSearch {
 				search(start);
 			}
 		}).start();
+		setNodesAsUnvisited();
 	}
 	
 	public void search(Node start) {
@@ -44,16 +45,7 @@ public class GreedyBestFirstSearch {
 				}
 				// return with List of Nodes and repaint the scene 
 				// to show path to goal
-				// 1 - Show path
 				g.showPath(path);
-				// 2 - wait 7 seconds
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				// 3 - Hide path
 			}
 			
 			pushSuccessors(next);
@@ -82,6 +74,13 @@ public class GreedyBestFirstSearch {
 				child.setParent(next);
 				open.add(child);
 			}
+		}
+	}
+	
+	private void setNodesAsUnvisited() {
+		for(int r=0; r<maze.length;r++) {
+			for(int c=0; c<maze[0].length;c++)
+				maze[r][c].setVisited(false);
 		}
 	}
 }

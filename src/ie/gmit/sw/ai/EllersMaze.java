@@ -2,7 +2,6 @@ package ie.gmit.sw.ai;
 
 import java.util.*;
 
-import ie.gmit.sw.game.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 

@@ -12,9 +12,17 @@ public class MazeGenerator {
 	public MazeGenerator(int rows, int cols) {
 		super();
 		maze = new Node[rows][cols];
-		//g = new EllersMaze(maze);
+		// g = new EllersMaze(maze);
 		g = new RecursiveBacktracker(maze);
 		initializeFeatures();
+		setNodesAsUnvisited();
+	}
+	
+	private void setNodesAsUnvisited() {
+		for(int r=0; r<maze.length;r++) {
+			for(int c=0; c<maze[0].length;c++)
+				maze[r][c].setVisited(false);
+		}
 	}
 	
 	
@@ -26,12 +34,13 @@ public class MazeGenerator {
 		 * - 3 Hints
 		 */
 		
-		addFeature(NodeType.enemy, NodeType.floor, 30);
+		addFeature(NodeType.enemy, NodeType.floor, 200);
 		addFeature(NodeType.weapon, NodeType.wall, 40);
 		addFeature(NodeType.hint, NodeType.wall, 20);
-		addFeature(NodeType.bomb, NodeType.wall, 5);
-		addFeature(NodeType.hBomb, NodeType.wall, 3);
+		addFeature(NodeType.bomb, NodeType.wall, 60); //15
+		addFeature(NodeType.radar, NodeType.wall, 40); //15
 		addFeature(NodeType.goal, NodeType.wall, 1);
+		addFeature(NodeType.key, NodeType.wall, 1);
 	}
 	
 	private void addFeature(NodeType feature, NodeType replace, int number){

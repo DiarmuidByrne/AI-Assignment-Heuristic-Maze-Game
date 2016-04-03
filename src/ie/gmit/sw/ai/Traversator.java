@@ -11,5 +11,5 @@ public interface Traversator {
 	
 	public void setCurrentNode(Node currentNode); public Node getCurrentNode();
 	
-	public void kill(boolean kill);
+	public void setFinished(boolean finished);
 }

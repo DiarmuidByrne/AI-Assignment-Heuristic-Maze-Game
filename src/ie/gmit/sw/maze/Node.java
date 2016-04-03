@@ -10,12 +10,12 @@ public class Node {
 	// npc's to the player to weapons
 	private NodeType nodeType;
 	private int row, col;
-	private Item i;
 	private boolean visited = false;
 	private boolean isGoalNode = false;
 	private Set<Node> nodeSet;
 	private boolean startingCell = false;
 	private Node parent;
+	private Enemy e;
 	
 	public Node() {
 		nodeSet = new HashSet<Node>();
@@ -34,12 +34,18 @@ public class Node {
 		double y2 = goal.getRow();
 		return (int) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
 	}
-	
+	// Returns true if a path can be made through the node
+	public boolean isTraversable() {
+		return nodeType == NodeType.floor
+				|| nodeType == NodeType.player
+				|| nodeType == NodeType.path
+				|| nodeType == NodeType.ash;
+	}
 	public boolean containsItem() {
-		return nodeType == nodeType.bomb 
-				|| nodeType == nodeType.hBomb
-				|| nodeType == nodeType.hint
-				|| nodeType == nodeType.weapon;
+		return nodeType == NodeType.bomb 
+				|| nodeType == NodeType.radar
+				|| nodeType == NodeType.hint
+				|| nodeType == NodeType.weapon;
 	}
 	
 	public boolean isStartingCell() {
@@ -112,6 +118,7 @@ public class Node {
 		return nodeType;
 	}
 	public void setNodeType(NodeType nodeType) {
+		if(nodeType != NodeType.enemy) e = null;
 		this.nodeType = nodeType;
 	}
 	
@@ -120,6 +127,14 @@ public class Node {
 	}
 	public void setRow(int row) {
 		this.row = row;
+	}
+	
+	public Enemy getEnemy() {
+		return e;
+	}
+	
+	public void setEnemy(Enemy e) {
+		this.e = e;
 	}
 	
 	public int getCol() {
