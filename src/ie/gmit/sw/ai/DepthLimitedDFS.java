@@ -10,10 +10,8 @@ public class DepthLimitedDFS {
 	private Node[][] maze;
 	private List<Node> nodesChecked = new ArrayList<Node>();
 	// Prevents radar searches from killing enemies
-	private boolean isBomb = false;
-	
-	public DepthLimitedDFS(Node[][] maze, boolean isBomb, Node startNode, int limit, GameView g) {
-		this.isBomb = isBomb;
+
+	public DepthLimitedDFS(Node[][] maze, Node startNode, int limit, GameView g) {
 		this.limit = limit;
 		this.maze = maze;
 		search(startNode, 1);
@@ -35,12 +33,8 @@ public class DepthLimitedDFS {
 		if (node.getNodeType() == NodeType.enemy) {
 
 			if(node.getEnemy()!=null){
-				if (isBomb) {
-					node.getEnemy().kill();
-					node.setNodeType(NodeType.ash);
-				} else {
-					node.getEnemy().setVisible(true);
-				}
+				node.getEnemy().kill();
+				node.setNodeType(NodeType.ash);
 			}
 		}
 
@@ -64,9 +58,5 @@ public class DepthLimitedDFS {
 
 	public void setMaze(Node[][] maze) {
 		this.maze = maze;
-	}
-
-	public void setFinished(boolean finished) {
-		
 	}
 }

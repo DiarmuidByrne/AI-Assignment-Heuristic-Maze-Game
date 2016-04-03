@@ -22,6 +22,9 @@ public class HeadsUpDisplay {
 		if (n == p.getCurrentNode()){
 			g2.setColor(Color.WHITE);
 			g2.fillRect(x1, y1, size, size);
+		} else if (n.getNodeType() == NodeType.path ){
+			g2.setColor(Color.WHITE);
+			g2.fillRect(x1, y1, size, size);
 		} else if(n.getNodeType() == NodeType.wall || n.containsItem()) {
 			g2.setColor(Color.decode("#336600"));
 			g2.fillRect(x1, y1, size, size);

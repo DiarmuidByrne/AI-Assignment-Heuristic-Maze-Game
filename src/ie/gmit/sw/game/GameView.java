@@ -38,6 +38,7 @@ public class GameView extends JPanel implements ActionListener{
 	private Player p;
 	private List<Node> path = new ArrayList<Node>();
 	private Node goalNode;
+	private boolean hintActive = false;
 	private HeadsUpDisplay hud = new HeadsUpDisplay(DEFAULT_VIEW_SIZE);
 
 
@@ -203,6 +204,7 @@ public class GameView extends JPanel implements ActionListener{
 			enemy.setMaze(maze);
 		}
 		if (p.getStepCount() > 50) {
+			hintActive = false;
 			hidePath();
 		}
 		repaint();
@@ -215,7 +217,8 @@ public class GameView extends JPanel implements ActionListener{
 	// Retrieves a list of Nodes from the Hints traverser class and displays a path to the goal
 	public void showPath(List<Node> path) {
 		this.path = path;
-		hud.showPath(p, path);
+		if (hintActive) p.setStepCount(0); 
+		else hud.showPath(p, path);
 	}
 	
 	public void hidePath() {

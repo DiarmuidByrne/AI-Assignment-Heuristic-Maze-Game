@@ -34,9 +34,9 @@ public class MazeGenerator {
 		 * - 3 Hints
 		 */
 		
-		addFeature(NodeType.enemy, NodeType.floor, 200);
-		addFeature(NodeType.weapon, NodeType.wall, 40);
-		addFeature(NodeType.hint, NodeType.wall, 20);
+		addFeature(NodeType.enemy, NodeType.floor, 80);
+		addFeature(NodeType.weapon, NodeType.wall, 70);
+		addFeature(NodeType.hint, NodeType.wall, 50);
 		addFeature(NodeType.bomb, NodeType.wall, 60); //15
 		addFeature(NodeType.radar, NodeType.wall, 40); //15
 		addFeature(NodeType.goal, NodeType.wall, 1);

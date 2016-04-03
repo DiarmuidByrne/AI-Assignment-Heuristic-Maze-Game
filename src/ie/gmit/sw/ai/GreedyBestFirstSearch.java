@@ -20,7 +20,7 @@ public class GreedyBestFirstSearch {
 		System.out.println(goal);
 		this.goal = goal;
 		this.g= g;
-		heuristicComparer = new HeuristicComparator(goal);
+		heuristicComparer = new HeuristicComparator();
 		open  = new PriorityQueue<Node>(20, heuristicComparer);
 		new Thread(new Runnable() {
 			public void run () {

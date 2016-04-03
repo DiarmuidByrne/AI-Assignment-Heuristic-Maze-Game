@@ -2,6 +2,7 @@ package ie.gmit.sw.maze;
 
 import java.util.*;
 
+import ie.gmit.sw.ai.*;
 import ie.gmit.sw.enemy.Enemy;
 
 public class Node {
@@ -10,6 +11,7 @@ public class Node {
 	// npc's to the player to weapons
 	private NodeType nodeType;
 	private int row, col;
+	private int distanceTravelled, approxDistanceToGoal;
 	private boolean visited = false;
 	private boolean isGoalNode = false;
 	private Set<Node> nodeSet;
@@ -54,6 +56,26 @@ public class Node {
 	
 	public void setStartingCell(boolean startingCell) {
 		this.startingCell = startingCell;
+	}
+	
+	public int getDistanceTravelled() {
+		return distanceTravelled;
+	}
+
+	public void setDistanceTravelled(int distanceTravelled) {
+		this.distanceTravelled = distanceTravelled;
+	}
+
+	public int getApproxDistanceToGoal() {
+		return approxDistanceToGoal;
+	}
+
+	public void setApproxDistanceToGoal(int approxDistanceToGoal) {
+		this.approxDistanceToGoal = approxDistanceToGoal;
+	}
+	
+	public float getScore() {
+		return HeuristicCalculator.getHeuristicValue(distanceTravelled, approxDistanceToGoal);
 	}
 	
 	public boolean isVisited() {

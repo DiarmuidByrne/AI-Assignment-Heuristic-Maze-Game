@@ -10,11 +10,8 @@ public class DepthLimitedBFS {
 	private Node[][] maze;
 	private LinkedList<Node> queue = new LinkedList<Node>();
 	private List<Node> nodesChecked = new ArrayList<Node>();
-	// Prevents radar searches from killing enemies
-	private boolean isBomb = false;
 	
 	public DepthLimitedBFS(Node[][] maze, boolean isBomb, Node startNode, int limit, GameView g) {
-		this.isBomb = isBomb;
 		this.limit = limit;
 		this.maze = maze;
 		search(startNode);
@@ -22,9 +19,8 @@ public class DepthLimitedBFS {
 	}
 	
 	/*
-	 * This search is used for bombs and radars
-	 * When used with a bomb, any enemy in the limit area will be killed
-	 * A radar will show any nearby enemy on the map for a limited time
+	 * This search is used for bombs
+	 * When a bomb is picked up, any enemy in the limit area will be killed
 	 */
 	
 	public void search(Node startNode){
@@ -42,9 +38,7 @@ public class DepthLimitedBFS {
 				getNearbyCellsByLayer(startNode, depth);
 				depth++;
 				continue;
-			} else {
-				
-			}
+			} 
 		}
 	}
 	

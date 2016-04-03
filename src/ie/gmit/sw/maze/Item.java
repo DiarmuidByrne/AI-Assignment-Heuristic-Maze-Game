@@ -19,7 +19,7 @@ public class Item {
 			new AStarSearch(maze, startNode, goal, g);
 		} else if(node.getNodeType() == NodeType.bomb) {
 			isBomb = true;
-			new DepthLimitedDFS(maze, isBomb, startNode, GRENADE_DEPTH_LIMIT, g);
+			new DepthLimitedDFS(maze, startNode, GRENADE_DEPTH_LIMIT, g);
 		}
 		else if (node.getNodeType() == NodeType.radar) {
 			isBomb = false;
