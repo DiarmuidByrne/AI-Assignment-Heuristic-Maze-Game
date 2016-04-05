@@ -3,6 +3,12 @@
 <br><B>Student Number:</B> G00302711
 <br><B>Lecturer:</B> John Healy
 
+## How to use
+To run the program:
+- ensure the jar file is located in the root folder, alongside "Resources" and "fcl"
+- From the command line/terminal use the command:
+java -cp "Heuristic Maze Game.jar" ie.gmit.sw.game.GameRunner
+
 ## Introduction
 This project was made for my final year Artificial Intelligence module. It combines heuristic and uninformed searches, along with fuzzy logic to form the gameplay elements for a maze traversing game.
 
