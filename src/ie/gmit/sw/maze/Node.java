@@ -5,10 +5,16 @@ import java.util.*;
 import ie.gmit.sw.ai.*;
 import ie.gmit.sw.enemy.Enemy;
 
+/*
+ * Each block in the maze is represented as a node.
+ * The node holds every component of the game, from
+ * NPS's, to the player to weapons and items.
+ * What is contained in each node is decided by the 
+ * NodeType Enum
+ */
+
 public class Node {
-	// Each block in the maze is represented as a node.
-	// The node can hold every component of the game, from
-	// npc's to the player to weapons
+	
 	private NodeType nodeType;
 	private int row, col;
 	private int distanceTravelled, approxDistanceToGoal;
@@ -18,6 +24,7 @@ public class Node {
 	private boolean startingCell = false;
 	private Node parent;
 	private Enemy e;
+	private float danger;
 	
 	public Node() {
 		nodeSet = new HashSet<Node>();
@@ -36,18 +43,21 @@ public class Node {
 		double y2 = goal.getRow();
 		return (int) Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
 	}
+	
 	// Returns true if a path can be made through the node
 	public boolean isTraversable() {
 		return nodeType == NodeType.floor
 				|| nodeType == NodeType.player
 				|| nodeType == NodeType.path
-				|| nodeType == NodeType.ash;
+				|| nodeType == NodeType.ash
+				|| nodeType == NodeType.enemy;
 	}
 	public boolean containsItem() {
 		return nodeType == NodeType.bomb 
 				|| nodeType == NodeType.radar
 				|| nodeType == NodeType.hint
-				|| nodeType == NodeType.weapon;
+				|| nodeType == NodeType.weapon
+				|| nodeType == NodeType.key;
 	}
 	
 	public boolean isStartingCell() {
@@ -75,7 +85,7 @@ public class Node {
 	}
 	
 	public float getScore() {
-		return HeuristicCalculator.getHeuristicValue(distanceTravelled, approxDistanceToGoal);
+		return HeuristicCalculator.getHeuristicValue(distanceTravelled, approxDistanceToGoal, danger);
 	}
 	
 	public boolean isVisited() {
@@ -103,12 +113,13 @@ public class Node {
 		List<Node> adjacentNodes = new ArrayList<Node>();
 		
 		if(row-1 > 0) adjacentNodes.add(maze[row-1][col]); // Node Above
-		if(row+1 < maze.length-1) adjacentNodes.add(maze[row+1][col]); // Node Below
+		if(row+1 < maze.length) adjacentNodes.add(maze[row+1][col]); // Node Below
 		if(col-1 > 0) adjacentNodes.add(maze[row][col-1]); // Node to left
-		if(col+1 < maze[0].length-1) adjacentNodes.add(maze[row][col+1]); // Node to right
+		if(col+1 < maze[0].length) adjacentNodes.add(maze[row][col+1]); // Node to right
 		return adjacentNodes; 
 	}
 	
+	// Gets nearby cells before the maze has been generated
 	public List<Node> getAdjacentCells(Node[][] maze) {
 		List<Node> adjacentNodes = new ArrayList<Node>();
 		
@@ -171,6 +182,14 @@ public class Node {
 	}
 	public void setNodeSet(Set<Node> nodeSet) {
 		this.nodeSet = nodeSet;
+	}
+
+	public float getDanger() {
+		return danger;
+	}
+
+	public void setDanger(float danger) {
+		this.danger = danger;
 	}	
 	
 }

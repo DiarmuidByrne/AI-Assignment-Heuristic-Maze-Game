@@ -4,15 +4,17 @@ import java.util.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 
+/*
+ * Implementation of a recursive backtracker algorithm
+ * Unlike Eller's algorithm, this produces a much windier solution,
+ * With a high river percentage and low dead-end percentage
+ */
+
 public class RecursiveBacktracker  implements Generator{
 	private Random r = new Random();
 	private Node[][] maze;
 	private Set<Node> startingCells = new HashSet<Node>();
-	/*
-	 * Implementation of a recursive backtracker algorithm
-	 * Unlike Eller's algorithm, this produces a much windier solution,
-	 * With a high river percentage and low dead-end percentage
-	 */
+
 	public RecursiveBacktracker(Node[][] maze) {
 		super();
 		this.maze = maze;

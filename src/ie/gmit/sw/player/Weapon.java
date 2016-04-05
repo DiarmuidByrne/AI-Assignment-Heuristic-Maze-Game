@@ -1,9 +1,14 @@
 package ie.gmit.sw.player;
 
-public class Weapon {
+/*
+ * The Durability of every picked up weapon is randomized.
+ * If a weapon of higher durability/condition is picked up, 
+ * the weapon in the player's inventory will be replaced
+ */
 
+public class Weapon {
+	
 	private int durability;
-	// Randomize condition of found weapon
 	public Weapon(int d) {
 		this.durability = d;
 	}

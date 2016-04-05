@@ -37,11 +37,14 @@ public class GameView extends JPanel implements ActionListener{
 	private Map<Node, Item> items = new HashMap<Node, Item>();
 	private Player p;
 	private List<Node> path = new ArrayList<Node>();
-	private Node goalNode;
+	private Node goalNode, keyNode;
 	private boolean hintActive = false;
 	private HeadsUpDisplay hud = new HeadsUpDisplay(DEFAULT_VIEW_SIZE);
-
-
+	
+	/*
+	 * The GameView class controls the Paint functions of
+	 * the project. It also acts as a mediator between the other classes
+	 */
 	
 	public GameView () throws Exception {
 		maze = m.getMaze();
@@ -63,6 +66,7 @@ public class GameView extends JPanel implements ActionListener{
 	    	if (maze[currentRow][currentCol].getNodeType() == NodeType.floor) placed = true;
 		}
     	maze[currentRow][currentCol].setNodeType(NodeType.player);
+    	p = new Player(maze[currentRow][currentCol]);
 	}
 	
 	public void setCurrentPosition(int row, int col) {
@@ -155,12 +159,9 @@ public class GameView extends JPanel implements ActionListener{
 				if (n.getNodeType() == NodeType.enemy) {
 					Enemy e = new EnemyImpl(maze, n, this);
 					e.setCurrentNode(n);
+					n.setDanger(e.getStrength()/10);
 					enemies.add(e);
 					n.setEnemy(e);
-				}
-				// Initialize Player Object
-				else if (n.getNodeType() == NodeType.player) {
-			    	p = new Player(n);
 				}
 				else if (n.getNodeType() == NodeType.goal) {
 					goalNode = n;
@@ -170,19 +171,24 @@ public class GameView extends JPanel implements ActionListener{
 				else if (n.containsItem()) {
 					Item i = new Item(n);
 					items.put(n, i);
+					if (n.getNodeType() == NodeType.key) keyNode = n;
 				}
 			}
 		}
 	}
 	
-	public void updateEnemyPositions(Node current, Node next) {
-		current.setNodeType(NodeType.floor);
+	public void updateEnemyPositions(Node current, NodeType currentType,  Node next) {
+		// Replace danger float value from current into next Node
+		if (currentType == NodeType.path) current.setNodeType(currentType);
+		else current.setNodeType(NodeType.floor);
 		next.setNodeType(NodeType.enemy);
+		next.setDanger(current.getDanger());
+		current.setDanger(0);
 		
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		
+		if (p.getHealth() < 0) hud.setGameOver(true, false);		
 		if (enemy_state < 0 || enemy_state == 5){
 			enemy_state = 6;
 		}else{
@@ -217,8 +223,9 @@ public class GameView extends JPanel implements ActionListener{
 	// Retrieves a list of Nodes from the Hints traverser class and displays a path to the goal
 	public void showPath(List<Node> path) {
 		this.path = path;
-		if (hintActive) p.setStepCount(0); 
-		else hud.showPath(p, path);
+		hintActive = true;
+
+		hud.showPath(p, path);
 	}
 	
 	public void hidePath() {
@@ -238,7 +245,20 @@ public class GameView extends JPanel implements ActionListener{
 	public void activateItem(Node n) {
 		if (n.getNodeType() == NodeType.weapon) p.addWeapon();
 		Item i = items.get(n);
-	    i.activateItem(maze, p.getCurrentNode(), goalNode, this);
+		Node nodeToSearch;
+		if(p.hasKey())  nodeToSearch = goalNode;
+		else nodeToSearch = keyNode;
+		i.activateItem(maze, p.getCurrentNode(), nodeToSearch, this);
+	}
+	
+	public void finishGame() {
+		if (p.hasKey()) {
+			hud.setGameOver(true, true);
+		} else hud.setMessageShown(true);
+	}
+	
+	public boolean isGameOver() {
+		return hud.getGameOver();
 	}
 	
 	private void init() throws Exception{
@@ -283,6 +303,9 @@ public class GameView extends JPanel implements ActionListener{
 		m.setMaze(maze);
 	}
 	
+	public boolean getHintActive() {
+		return hintActive;
+	}
 	public int getMazeDimension() {
 		return MAZE_DIMENSION;
 	}

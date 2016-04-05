@@ -12,18 +12,24 @@ public class Item {
 		this.node = node;
 	}
 	
+	/*
+	 * Activates the items that were picked up by the player
+	 * Items include a bomb that uses a depth-limited DFS to kill enemies within a radius
+	 * a radar shows all enemies on the map within a limited radius using a depth-limited BFS
+	 * The key object allows the player to exit the map when it reaches the final goal node
+	 */
+	
 	public void activateItem(Node[][] maze, Node startNode, Node goal, GameView g) {
-		boolean isBomb;
 		if (node.getNodeType() == NodeType.hint) {
-//			new GreedyBestFirstSearch(maze, startNode, goal, g);
 			new AStarSearch(maze, startNode, goal, g);
+			
 		} else if(node.getNodeType() == NodeType.bomb) {
-			isBomb = true;
 			new DepthLimitedDFS(maze, startNode, GRENADE_DEPTH_LIMIT, g);
 		}
 		else if (node.getNodeType() == NodeType.radar) {
-			isBomb = false;
-			new DepthLimitedBFS(maze, isBomb, startNode, RADAR_DEPTH_LIMIT, g);
+			new DepthLimitedBFS(maze, startNode, RADAR_DEPTH_LIMIT, g);
+		} else if (node.getNodeType() == NodeType.key) {
+			g.getPlayer().giveKey();
 		}
 	}
 }

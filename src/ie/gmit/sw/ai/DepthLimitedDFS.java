@@ -19,9 +19,8 @@ public class DepthLimitedDFS {
 	}
 	
 	/*
-	 * This search is used for bombs and radars
-	 * When used with a bomb, any enemy in the limit area will be killed
-	 * A radar will show any nearby enemy on the map for a limited time
+	 * This search is used for bombs
+	 * any enemy in the limit area will be killed
 	 */
 	
 	public void search(Node node, int depth) {

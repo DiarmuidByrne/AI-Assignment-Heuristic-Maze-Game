@@ -10,9 +10,20 @@ import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 import ie.gmit.sw.player.Player;
 
+/*
+ * This class controls the display of the map and additional
+ * information for the game, such as the player's current health
+ * and the player's weapon condition
+ * Also displays a path when a hint is activated 
+ * and a message when the game is over
+ */
+
 public class HeadsUpDisplay {
 	private boolean hintActive;
 	private int DEFAULT_VIEW_SIZE;
+	private boolean messageShown = false, timerStarted = false;
+	private boolean won = false, gameOver = false;
+	
 	public HeadsUpDisplay(int DEFAULT_VIEW_SIZE) {
 		this.DEFAULT_VIEW_SIZE = DEFAULT_VIEW_SIZE;
 	}
@@ -29,13 +40,18 @@ public class HeadsUpDisplay {
 			g2.setColor(Color.decode("#336600"));
 			g2.fillRect(x1, y1, size, size);
 		} else if (n.getNodeType() == NodeType.enemy) {
+			// Only display enemies if ther are nearby and a radar has been picked up
 			if (n.getEnemy()== null || n.getEnemy().isVisible() == false) return;
-			else g2.setColor(Color.RED);
+			g2.setColor(Color.RED);
 			g2.fillRect(x1, y1, size, size);
 		} else if (n.getNodeType() == NodeType.goal) {
 			g2.setColor(Color.YELLOW);
 			g2.fillRect(x1, y1, size, size);
 		} else if (n.getNodeType() == NodeType.hint) {
+			g2.setColor(Color.BLUE);
+			g2.fillRect(x1, y1, size, size);
+		}
+		if (n.getNodeType() == NodeType.key) {
 			g2.setColor(Color.BLUE);
 			g2.fillRect(x1, y1, size, size);
 		}
@@ -55,6 +71,8 @@ public class HeadsUpDisplay {
         g2.fillRect(DEFAULT_VIEW_SIZE/2-100, 40, p.getHealth()*2,10);
         
         showWeaponDurability(p, g2);
+        if (messageShown) showMessage(g2);
+        if (gameOver) showGameOverMenu(won, g2);
 	}
 	
 	public void showWeaponDurability(Player p, Graphics2D g2) {
@@ -72,14 +90,56 @@ public class HeadsUpDisplay {
 		}
 	}
 	
+	// Displays when the player dies or when the player finishes the game
+	private void showGameOverMenu(boolean won, Graphics2D g2) {
+		Font font = new Font(Font.DIALOG_INPUT, Font.BOLD, 35);
+		g2.setColor(Color.black); 
+		g2.fillRect(0, 0, DEFAULT_VIEW_SIZE, DEFAULT_VIEW_SIZE);
+		g2.setFont(font);
+		FontMetrics f = g2.getFontMetrics(font);
+
+		// Show game winning message
+		if (won) {
+			g2.setColor(Color.white);
+			String message = "YOU WON! \nPress Enter to Quit!";
+	        g2.drawString(message, DEFAULT_VIEW_SIZE/2-f.stringWidth(message)/2, DEFAULT_VIEW_SIZE/2);
+		}
+		// Show game over message
+		else {
+			g2.setColor(Color.RED);
+			String message = "YOU DIED! \nPress Enter to Quit!";
+	        g2.drawString(message, DEFAULT_VIEW_SIZE/2-f.stringWidth(message)/2, DEFAULT_VIEW_SIZE/2);
+		}
+	}
+	
 	public void showPath(Player p, List<Node> path) {
 		p.setStepCount(0);
 		for(Node node : path) {
 				if (node.getNodeType() != NodeType.player &&
-						node.getNodeType() != NodeType.enemy && node.getNodeType()!= NodeType.goal) 
+						node.getNodeType() != NodeType.enemy && 
+						node.getNodeType()!= NodeType.goal &&
+						node.getNodeType() != NodeType.key) 
 					node.setNodeType(NodeType.path);
 			}
 		hintActive = true;
+	}
+	
+	public void showMessage(Graphics2D g2) {
+		// Show message
+		Font font = new Font(Font.DIALOG_INPUT, Font.BOLD, 20);
+		FontMetrics f = g2.getFontMetrics(font);
+		g2.setFont(font);
+		String message = "You need a key before you can exit the maze!"; 
+		g2.setColor(Color.RED);
+        g2.drawString(message, DEFAULT_VIEW_SIZE/2-(f.stringWidth(message)/2), 80);
+		if((!timerStarted)) {
+			timerStarted = true;
+			new Thread(new Runnable() {
+				public void run() {
+					startTimer();
+				}
+			}).start();
+		}
 	}
 	
 	public void hidePath(List<Node> path) {
@@ -91,7 +151,26 @@ public class HeadsUpDisplay {
 		}
 	}
 	
-	public void showEnemyStatus() {
-		
+	public void setMessageShown(boolean messageShown) {
+		this.messageShown = messageShown;
+	}
+	
+	private void startTimer() {
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		messageShown = false;
+	}
+	
+	public void setGameOver(boolean gameOver, boolean won) {
+		this.gameOver = gameOver;
+		this.won = won;
+	}
+	
+	public boolean getGameOver() {
+		return gameOver;
 	}
 }

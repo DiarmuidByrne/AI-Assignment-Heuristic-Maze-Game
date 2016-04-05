@@ -5,6 +5,11 @@ import java.util.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 
+/*
+ * Maze generation algorithm
+ * Creates a maze using HashSets to control the generation 
+ */
+
 public class EllersMaze  implements Generator{
 	private Random r = new Random();
 	private Set<Set<Node>> sets = new HashSet<Set<Node>>();
@@ -110,7 +115,7 @@ public class EllersMaze  implements Generator{
 	}
 	// Finalize maze when the last row is reached
 	// 1. All cells must belong to the same set
-//	 2. No bottom walls can be broken for the lowest row
+	// 2. No bottom walls can be broken for the lowest row
 	private void finishMaze(Set<Node> set) {
 		List<Node> bottomNodes = getBottomNodes(set, maze.length-1);
 		

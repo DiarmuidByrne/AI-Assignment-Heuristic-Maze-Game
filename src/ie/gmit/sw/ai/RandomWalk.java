@@ -6,6 +6,13 @@ import ie.gmit.sw.game.*;
 import ie.gmit.sw.maze.Node;
 import ie.gmit.sw.maze.NodeType;
 
+/*
+ * This is an implementation of the 'RandomWalk' search algorithm.
+ * The only difference is, if the enemy can see the player
+ * (i.e is in an adjacent Node) 
+ * it will instinctively move into the player position
+ */
+
 public class RandomWalk implements Traversator {
 	private final int MAX_DELAY = 1500, MIN_DELAY = 1000;
 	private Node[][] maze;
@@ -14,13 +21,6 @@ public class RandomWalk implements Traversator {
 	private Random r = new Random();
 	private volatile boolean complete = false;
 	private volatile boolean playerFound = false;
-	
-	/*
-	 * This is an implementation of the 'RandomWalk' search algorithm.
-	 * The only difference is, if the enemy can see the player
-	 * (i.e is in an adjacent Node) 
-	 * it will instinctively move into the player position
-	 */
 	
 	public RandomWalk(Node[][] maze, Node currentNode, GameView g){
 		this.maze = maze;
@@ -35,7 +35,10 @@ public class RandomWalk implements Traversator {
 	}
 	
 	public void search(Node currentNode) {
+		NodeType currentNodeType = NodeType.floor,  nextNodeType = NodeType.floor;
+
 		while(!complete){			
+
 			try { 
 				// Set delay for enemy movement
 				// Delay is randomized so enemy movement patterns aren't synced
@@ -59,16 +62,22 @@ public class RandomWalk implements Traversator {
         	if(!playerFound) {
 	        	// Pick random nearby Node until an available position is found
 	        	while (children.get(nextNodeIndex).getNodeType() != NodeType.floor
-	        			&& children.get(nextNodeIndex).getNodeType() != NodeType.player) {
+	        			&& children.get(nextNodeIndex).getNodeType() != NodeType.player
+	        			&& children.get(nextNodeIndex).getNodeType() != NodeType.path
+	        			&& children.get(nextNodeIndex).getNodeType() != NodeType.ash) {
 	           		nextNodeIndex = (int)(children.size() * Math.random());
 	        	} 
 	        	// Move enemy in new direction
 	        	nextNode = children.get(nextNodeIndex);
         	} 
         	if(complete) return;
-        	if(playerFound) g.initializeFight(currentNode);
+        	if(playerFound) {
+        		g.initializeFight(currentNode);
+        	}
+        	nextNodeType = nextNode.getNodeType();
         	nextNode.setEnemy(currentNode.getEnemy());
-        	g.updateEnemyPositions(currentNode, nextNode);
+        	g.updateEnemyPositions(currentNode, currentNodeType, nextNode);
+        	currentNodeType = nextNodeType;
         	currentNode = nextNode;
         	this.currentNode = currentNode;
 			if (g.getPlayer().getCurrentNode() == currentNode) return; 
@@ -99,7 +108,6 @@ public class RandomWalk implements Traversator {
 		this.maze = maze;
 	}
 
-	@Override
 	public void setFinished(boolean finished) {
 		complete = finished;		
 	}

@@ -12,7 +12,7 @@ public class Player {
 	// Will hide any shown pathways if it reaches a certain value
 	private int stepCount = 0;
 	private boolean facingRight = true;
-	
+	private boolean hasKey = false;
 	
 	public Player() {
 		weapon = new Weapon(0);
@@ -89,5 +89,13 @@ public class Player {
 	
 	public boolean isFacingRight() { 
 		return facingRight;
+	}
+
+	public boolean hasKey() {
+		return hasKey;
+	}
+
+	public void giveKey() {
+		hasKey = true;
 	}
 }

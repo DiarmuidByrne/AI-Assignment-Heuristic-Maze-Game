@@ -5,10 +5,18 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.*;
 import javax.swing.JFrame;
 
 import ie.gmit.sw.maze.*;
+
+ /*
+  * Contains the Main method to run the program
+  * Also controls player movement using the Keylistener interface
+  */
 
 public class GameRunner implements KeyListener{
 
@@ -62,7 +70,11 @@ public class GameRunner implements KeyListener{
         	}
         }else if (e.getKeyCode() == KeyEvent.VK_Z){
         	view.toggleZoom();
-        }else{
+        }else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        	if (view.isGameOver())
+        		System.exit(0);
+        }
+        else{
         	return;
         }
         
@@ -102,17 +114,13 @@ public class GameRunner implements KeyListener{
 		}
 	}
 	
-	public GameView getView() {
-		return view;
-	}
-	
 	private void checkForItems(int r, int c) {
 		Node n = model[r][c];
 		
 		if(n.containsItem()) {
 			 view.activateItem(n);
 			n.setNodeType(NodeType.wall);
-		}
+		} else if (n.isGoalNode()) view.finishGame();
 	}
 	
 	public static void main(String[] args) throws Exception {

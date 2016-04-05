@@ -11,7 +11,7 @@ public class DepthLimitedBFS {
 	private LinkedList<Node> queue = new LinkedList<Node>();
 	private List<Node> nodesChecked = new ArrayList<Node>();
 	
-	public DepthLimitedBFS(Node[][] maze, boolean isBomb, Node startNode, int limit, GameView g) {
+	public DepthLimitedBFS(Node[][] maze, Node startNode, int limit, GameView g) {
 		this.limit = limit;
 		this.maze = maze;
 		search(startNode);
@@ -30,7 +30,8 @@ public class DepthLimitedBFS {
 			Node currentNode = queue.getFirst();
 
 			if (currentNode.getNodeType() == NodeType.enemy){
-				currentNode.getEnemy().setVisible(true);
+				if (currentNode.getEnemy()!=null)
+					currentNode.getEnemy().setVisible(true);
 			}
 			
 			queue.removeFirst();

@@ -12,7 +12,7 @@ public class MazeGenerator {
 	public MazeGenerator(int rows, int cols) {
 		super();
 		maze = new Node[rows][cols];
-		// g = new EllersMaze(maze);
+		 //g = new EllersMaze(maze);
 		g = new RecursiveBacktracker(maze);
 		initializeFeatures();
 		setNodesAsUnvisited();
@@ -27,11 +27,14 @@ public class MazeGenerator {
 	
 	
 	private void initializeFeatures() {
+		
 		/*
 		 * Initialize Game Features
 		 * - 1 Enemies
 		 * - 2 Weapons and Bombs 
 		 * - 3 Hints
+		 * - 4 Goal
+		 * - 5 Key
 		 */
 		
 		addFeature(NodeType.enemy, NodeType.floor, 80);

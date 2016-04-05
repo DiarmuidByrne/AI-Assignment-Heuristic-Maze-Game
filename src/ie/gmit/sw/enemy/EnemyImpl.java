@@ -15,6 +15,10 @@ public class EnemyImpl implements Enemy {
 	 * 
 	 * All encapsulated methods here delegate 
 	 * to the appropriate Traversator implementation
+	 * 
+	 * The traveser is randomized between a Heuristic best-first search
+	 * and a RandomWalk algorithm 
+	 * (Biased towards RandomWalk for more balanced gameplay)
 	 */
 	private int strength;
 	private Traversator t;
@@ -29,9 +33,11 @@ public class EnemyImpl implements Enemy {
 	
 	public void search(Node[][] maze, Node startNode, GameView g) {
 		// Randomize search algorithm
-		int i = r.nextInt(1);
+		int i = r.nextInt(4);
 		
-		if(i == 0) t = new RandomWalk(maze, startNode, g); 
+		if(i == 0) t = new BestFirstSearch(maze, startNode, g, this);
+		else t = new RandomWalk(maze, startNode, g); 
+
 	}
 	
 	public void setMaze(Node[][] maze) {
