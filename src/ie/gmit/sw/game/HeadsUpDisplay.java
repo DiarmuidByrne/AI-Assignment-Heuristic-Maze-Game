@@ -36,7 +36,9 @@ public class HeadsUpDisplay {
 		} else if (n.getNodeType() == NodeType.path ){
 			g2.setColor(Color.WHITE);
 			g2.fillRect(x1, y1, size, size);
-		} else if(n.getNodeType() == NodeType.wall || n.containsItem()) {
+		} else if(n.getNodeType() == NodeType.wall 
+				|| n.getNodeType() == NodeType.goal
+				|| n.containsItem()) {
 			g2.setColor(Color.decode("#336600"));
 			g2.fillRect(x1, y1, size, size);
 		} else if (n.getNodeType() == NodeType.enemy) {
@@ -44,17 +46,7 @@ public class HeadsUpDisplay {
 			if (n.getEnemy()== null || n.getEnemy().isVisible() == false) return;
 			g2.setColor(Color.RED);
 			g2.fillRect(x1, y1, size, size);
-		} else if (n.getNodeType() == NodeType.goal) {
-			g2.setColor(Color.YELLOW);
-			g2.fillRect(x1, y1, size, size);
-		} else if (n.getNodeType() == NodeType.hint) {
-			g2.setColor(Color.BLUE);
-			g2.fillRect(x1, y1, size, size);
-		}
-		if (n.getNodeType() == NodeType.key) {
-			g2.setColor(Color.BLUE);
-			g2.fillRect(x1, y1, size, size);
-		}
+		} 
 	}
 	
 	public void showHealth(Player p, Graphics2D g2) {
