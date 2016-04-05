@@ -9,9 +9,11 @@ import ie.gmit.sw.maze.NodeType;
 import ie.gmit.sw.player.Player;
 
 public class BestFirstSearch implements Traversator{
+	private final int MAX_DELAY = 1500, MIN_DELAY = 1000;
+	private Random r = new Random();
 	private Node[][] maze;
 	private Player p;
-	private Node currentNode, nextNode;
+	private Node currentNode;
 	private NodeType currentNodeType = NodeType.floor, nextNodeType;
 	private LinkedList<Node> queue = new LinkedList<Node>();;
 	private Enemy e;
@@ -38,7 +40,16 @@ public class BestFirstSearch implements Traversator{
 		currentNode = start;
 		while(!queue.isEmpty() && !complete) {
 			Node next = queue.poll();
+			
+			try {
+				int ms = (int)r.nextInt(MAX_DELAY-MIN_DELAY) + MIN_DELAY;
+				Thread.sleep(ms);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (complete) return;
 			if (!firstMove) {
+				if (next.getNodeType() == NodeType.enemy) continue;
 				nextNodeType = next.getNodeType();
 	        	next.setEnemy(currentNode.getEnemy());
 
@@ -55,12 +66,8 @@ public class BestFirstSearch implements Traversator{
 				return;
 			}
 			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
+			queue.clear();
+
 			pushSuccessors(next);
 			Collections.sort(queue,(Node current, Node nextNode) -> current.getHeuristic(p.getCurrentNode()) - nextNode.getHeuristic(p.getCurrentNode()));		
 		}

@@ -36,8 +36,7 @@ public class EnemyImpl implements Enemy {
 		int i = r.nextInt(4);
 		
 		if(i == 0) t = new BestFirstSearch(maze, startNode, g, this);
-		else t = new RandomWalk(maze, startNode, g); 
-
+		 t = new RandomWalk(maze, startNode, g); 
 	}
 	
 	public void setMaze(Node[][] maze) {

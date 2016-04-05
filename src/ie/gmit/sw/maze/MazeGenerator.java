@@ -6,13 +6,13 @@ import ie.gmit.sw.ai.*;
 public class MazeGenerator {
 	private Node[][] maze;
 	private Generator g;
-	Set<Set<Node>> sets = new HashSet<Set<Node>>();
 	
 	
 	public MazeGenerator(int rows, int cols) {
 		super();
 		maze = new Node[rows][cols];
-		 //g = new EllersMaze(maze);
+		
+//		g = new EllersMaze(maze);
 		g = new RecursiveBacktracker(maze);
 		initializeFeatures();
 		setNodesAsUnvisited();

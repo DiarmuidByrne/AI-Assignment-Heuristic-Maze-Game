@@ -5,10 +5,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
 import javax.swing.JFrame;
 
 import ie.gmit.sw.maze.*;
@@ -55,30 +51,33 @@ public class GameRunner implements KeyListener{
 	}
 
     public void keyPressed(KeyEvent e) {
-    	
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && currentCol < mazeDimension - 1) {
-        	view.setFacingRight(true);
-        	if (isValidMove(currentRow, currentCol + 1)) currentCol++;   		
-        }else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0) {
-        	view.setFacingRight(false);
-        	if (isValidMove(currentRow, currentCol - 1)) currentCol--;	
-        }else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0) {
-        	if (isValidMove(currentRow - 1, currentCol)) currentRow--;
-        }else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < mazeDimension - 1) {
-        	if (isValidMove(currentRow + 1, currentCol)) {
-        		currentRow++;
-        	}
-        }else if (e.getKeyCode() == KeyEvent.VK_Z){
-        	view.toggleZoom();
-        }else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-        	if (view.isGameOver())
+    	if (view.isGameOver()) {
+    		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
         		System.exit(0);
-        }
-        else{
-        	return;
-        }
-        
-        updateView();
+    		}
+    	} 
+    	else {
+    		if (e.getKeyCode() == KeyEvent.VK_RIGHT && currentCol < mazeDimension - 1) {
+            	view.setFacingRight(true);
+            	if (isValidMove(currentRow, currentCol + 1)) currentCol++;   		
+            }else if (e.getKeyCode() == KeyEvent.VK_LEFT && currentCol > 0) {
+            	view.setFacingRight(false);
+            	if (isValidMove(currentRow, currentCol - 1)) currentCol--;	
+            }else if (e.getKeyCode() == KeyEvent.VK_UP && currentRow > 0) {
+            	if (isValidMove(currentRow - 1, currentCol)) currentRow--;
+            }else if (e.getKeyCode() == KeyEvent.VK_DOWN && currentRow < mazeDimension - 1) {
+            	if (isValidMove(currentRow + 1, currentCol)) {
+            		currentRow++;
+            	}
+            }else if (e.getKeyCode() == KeyEvent.VK_Z){
+            	view.toggleZoom();
+            }
+            else{
+            	return;
+            }
+            
+            updateView();
+    	}
     }
     public void keyReleased(KeyEvent e) {} //Ignore
 	public void keyTyped(KeyEvent e) {} //Ignore

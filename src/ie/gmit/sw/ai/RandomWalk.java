@@ -71,15 +71,18 @@ public class RandomWalk implements Traversator {
 	        	nextNode = children.get(nextNodeIndex);
         	} 
         	if(complete) return;
-        	if(playerFound) {
-        		g.initializeFight(currentNode);
-        	}
+
         	nextNodeType = nextNode.getNodeType();
         	nextNode.setEnemy(currentNode.getEnemy());
         	g.updateEnemyPositions(currentNode, currentNodeType, nextNode);
+
         	currentNodeType = nextNodeType;
         	currentNode = nextNode;
         	this.currentNode = currentNode;
+        	if(currentNode == g.getPlayer().getCurrentNode()) {
+        		g.initializeFight(currentNode);
+        		return;
+        	}
 			if (g.getPlayer().getCurrentNode() == currentNode) return; 
 		}
 	}
